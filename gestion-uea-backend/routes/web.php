@@ -10,7 +10,12 @@ use App\Http\Controllers\SalleController;
 use App\Http\Controllers\SeanceController;
 use App\Http\Controllers\DashboardController;
 
+    Route::get('/', function () {
+        return view('welcome');
+        });
+
 Route::prefix('api')->group(function () {
+
     // Routes publiques
     Route::post('/login', [AuthController::class, 'login']);
 

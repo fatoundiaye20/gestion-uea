@@ -13,6 +13,7 @@ import EnseignantDashboard from './pages/enseignant/Dashboard';
 import AssistantDashboard from './pages/assistant/Dashboard';
 import Unauthorized from './pages/Unauthorized';
 import NotFound from './pages/NotFound';
+import About from './pages/about';
 
 function App() {
   return (
@@ -67,6 +68,9 @@ function App() {
           {/* Redirection automatique selon le rôle */}
           <Route path="/dashboard" element={<RoleBasedRedirect />} />
           <Route path="*" element={<NotFound />} />
+
+          {/* Page Découvrir plus */}
+          <Route path="/about" element={<About />} />
         </Routes>
       </AuthProvider>
     </Router>

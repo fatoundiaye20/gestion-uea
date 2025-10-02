@@ -1,6 +1,13 @@
-// src/pages/enseignant/Dashboard.tsx
+import { Routes, Route } from 'react-router-dom';
+import EnseignantHome from './EnseignantHome';
+
 const EnseignantDashboard = () => {
-  return <div className="p-8">Dashboard Enseignant - En cours de développement</div>;
+  return (
+    <Routes>
+      <Route path="home" element={<EnseignantHome />} />
+      <Route path="/" element={<EnseignantHome />} />
+    </Routes>
+  );
 };
 
-export default EnseignantDashboard
+export default EnseignantDashboard;

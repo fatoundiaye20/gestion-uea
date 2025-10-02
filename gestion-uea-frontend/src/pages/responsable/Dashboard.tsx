@@ -1,6 +1,13 @@
-// src/pages/responsable/Dashboard.tsx
+import { Routes, Route } from 'react-router-dom';
+import ResponsableHome from './ResponsableHome';
+
 const ResponsableDashboard = () => {
-  return <div className="p-8">Dashboard Responsable - En cours de développement</div>;
+  return (
+    <Routes>
+      <Route path="home" element={<ResponsableHome />} />
+      <Route path="/" element={<ResponsableHome />} />
+    </Routes>
+  );
 };
 
 export default ResponsableDashboard;

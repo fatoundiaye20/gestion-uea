@@ -1,6 +1,13 @@
-// src/pages/assistant/Dashboard.tsx
+import { Routes, Route } from 'react-router-dom';
+import AssistantHome from './AssistantHome';
+
 const AssistantDashboard = () => {
-  return <div className="p-8">Dashboard Assistant - En cours de développement</div>;
+  return (
+    <Routes>
+      <Route path="home" element={<AssistantHome />} />
+      <Route path="/" element={<AssistantHome />} />
+    </Routes>
+  );
 };
 
 export default AssistantDashboard;

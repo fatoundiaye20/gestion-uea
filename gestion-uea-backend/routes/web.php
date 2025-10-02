@@ -51,3 +51,4 @@ Route::prefix('api')->group(function () {
         Route::get('/dashboard/calendrier', [DashboardController::class, 'calendrier']);
     });
 });
+            

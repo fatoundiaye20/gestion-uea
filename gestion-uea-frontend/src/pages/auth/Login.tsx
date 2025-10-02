@@ -85,7 +85,7 @@ export default function Login() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="mb-4 p-3 bg-white h-10 text-center rounded-2xl border focus:outline-none focus:ring-2 focus:ring-[#003366] w-full text-black placeholder-[#3f2a02]"
+              className="mb-4 p-3 bg-white h-10 text-center rounded border focus:outline-none focus:ring-2 focus:ring-[#003366] w-full text-black placeholder-[#3f2a02]"
               placeholder="nom@domaine.sn"
               required
             /> <br /> <br />
@@ -97,7 +97,7 @@ export default function Login() {
               value={formData.password}
               onChange={handleChange}
               placeholder="Saisir votre mot de passe"
-              className="mb-4 p-3 rounded-2xl text-center border bg-white h-10 text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#003366] w-full placeholder-[#3f2a02]"
+              className="mb-4 p-3 rounded text-center border bg-white h-10 text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#003366] w-full placeholder-[#3f2a02]"
               required
             /> <br /> <br />
 
@@ -107,7 +107,7 @@ export default function Login() {
               <select
                 name="profession"
                 onChange={handleChange}
-                className="appearance-none text-center h-10 w-full p-3 rounded-2xl border border-gray-300 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#003366]"
+                className="appearance-none text-center h-10 w-full p-3 rounded border border-gray-300 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#003366]"
               >
                 <option value="enseignant">Enseignant</option>
                 <option value="assistant">Assistant</option>

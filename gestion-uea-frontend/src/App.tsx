@@ -1,7 +1,8 @@
-// src/App.tsx
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import { Toaster } from 'react-hot-toast';
+
 
 // Pages
 import Home from './pages/Home';
@@ -12,20 +13,19 @@ import EnseignantDashboard from './pages/enseignant/Dashboard';
 import AssistantDashboard from './pages/assistant/Dashboard';
 import Unauthorized from './pages/Unauthorized';
 import NotFound from './pages/NotFound';
+import About from './pages/about';
 
 function App() {
   return (
     <Router>
       <AuthProvider>
+        <Toaster />
         <Routes>
-          {/* Route par défaut : Home */}
           <Route path="/" element={<Home />} />
-
-          {/* Routes publiques */}
           <Route path="/login" element={<Login />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
 
-          {/* Dashboard Chef de Département */}
+          {/* ✅ Route pour chef de département */}
           <Route
             path="/chef/*"
             element={
@@ -35,7 +35,7 @@ function App() {
             }
           />
 
-          {/* Dashboard Responsable de Métier */}
+          {/* ✅ Route pour responsable de métier */}
           <Route
             path="/responsable/*"
             element={
@@ -45,7 +45,7 @@ function App() {
             }
           />
 
-          {/* Dashboard Enseignant */}
+          {/* ✅ Route pour enseignant */}
           <Route
             path="/enseignant/*"
             element={
@@ -55,7 +55,7 @@ function App() {
             }
           />
 
-          {/* Dashboard Assistant */}
+          {/* ✅ Route pour assistant */}
           <Route
             path="/assistant/*"
             element={
@@ -65,35 +65,54 @@ function App() {
             }
           />
 
-          {/* Redirection automatique si déjà connecté */}
+          {/* Redirection automatique selon le rôle */}
           <Route path="/dashboard" element={<RoleBasedRedirect />} />
-
-          {/* Page 404 */}
           <Route path="*" element={<NotFound />} />
+
+          {/* Page Découvrir plus */}
+          <Route path="/about" element={<About />} />
         </Routes>
       </AuthProvider>
     </Router>
   );
 }
 
-// Redirection selon rôle
 const RoleBasedRedirect = () => {
-  const userStr = localStorage.getItem('user');
-  const token = localStorage.getItem('token');
+  const { user, isAuthenticated, loading } = useAuth();
 
-  if (!token || !userStr) {
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated || !user || !user.role) {
     return <Navigate to="/login" replace />;
   }
 
-  const user = JSON.parse(userStr);
+  const role = user.role.trim().toLowerCase();
+
   const redirectMap: Record<string, string> = {
-    chef_dep: '/chef',
-    responsable_metier: '/responsable',
-    enseignant: '/enseignant',
-    assistant: '/assistant',
+    chef_dep: '/chef/home',
+    responsable_metier: '/responsable/home',
+    enseignant: '/enseignant/home',
+    assistant: '/assistant/home',
   };
 
-  return <Navigate to={redirectMap[user.role] || '/login'} replace />;
+  const target = redirectMap[role];
+
+  if (target) {
+    return <Navigate to={target} replace />;
+  }
+
+  return <Navigate to="/unauthorized" replace />;
 };
+
+
+
+
+
 
 export default App;

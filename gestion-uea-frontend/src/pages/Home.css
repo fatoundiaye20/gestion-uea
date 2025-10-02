@@ -84,6 +84,15 @@
   border-radius: 6px;
 }
 
+p.senegal {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ffffff; /* Couleur jaune pour "Du Sénégal" */
+  text-align: center;
+
+}
+
 /* Footer */
 .home-footer {
   text-align: center;

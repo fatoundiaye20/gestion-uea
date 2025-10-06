@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('ueas', function (Blueprint $table) {
-            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('created_by')->nullable()->after('niveau')->constrained('users')->onDelete('set null');
         });
     }
 

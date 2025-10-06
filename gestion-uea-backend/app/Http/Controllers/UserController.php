@@ -23,15 +23,22 @@ class UserController extends Controller
 
         // Filtrer selon le rôle
         if ($user->role === 'responsable_metier' && $user->filiere_id) {
-            // Le responsable ne voit que les utilisateurs de sa filière
             $query->where(function($q) use ($user) {
                 $q->where('filiere_id', $user->filiere_id)
-                ->orWhereNull('filiere_id'); // Inclure les assistants
+                ->orWhereNull('filiere_id');
             });
         }
 
         if ($request->has('role')) {
-            $query->where('role', $request->role);
+            $role = $request->role;
+            $query->where('role', $role);
+            
+            // ✅ AJOUT - Charger les relations selon le rôle
+            if ($role === 'enseignant') {
+                $query->with('seances.uea');
+            } elseif ($role === 'responsable_metier') {
+                $query->with(['ueas', 'seances']);
+            }
         }
 
         if ($request->has('filiere_id')) {
@@ -46,14 +53,11 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $currentUser = $request->user();
 
-        // Vérifications de permissions
         if ($currentUser->role === 'responsable_metier') {
-            // Le responsable ne peut modifier que les utilisateurs de sa filière
             if ($user->filiere_id !== $currentUser->filiere_id && $user->filiere_id !== null) {
                 return response()->json(['message' => 'Non autorisé'], 403);
             }
             
-            // Le responsable ne peut pas modifier un chef de département ou un autre responsable
             if (in_array($user->role, ['chef_dep', 'responsable_metier'])) {
                 return response()->json(['message' => 'Non autorisé à modifier ce type d\'utilisateur'], 403);
             }
@@ -71,7 +75,7 @@ class UserController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $data = $request->except(['role', 'filiere_id']); // Empêcher la modification du rôle et filière
+        $data = $request->except(['role', 'filiere_id']);
 
         if ($request->has('password')) {
             $data['password'] = Hash::make($request->password);
@@ -90,12 +94,10 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $currentUser = request()->user();
 
-        // Seul le chef de département peut supprimer
         if ($currentUser->role !== 'chef_dep') {
             return response()->json(['message' => 'Seul le chef de département peut supprimer des utilisateurs'], 403);
         }
 
-        // Ne peut pas se supprimer lui-même
         if ($user->id === $currentUser->id) {
             return response()->json(['message' => 'Vous ne pouvez pas vous supprimer vous-même'], 422);
         }
@@ -103,5 +105,21 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json(['message' => 'Utilisateur supprimé avec succès']);
+    }
+
+    public function getChef(Request $request)
+    {
+        $chef = $request->user();
+
+        if ($chef->role !== 'chef_dep') {
+            return response()->json(['message' => 'Accès refusé'], 403);
+        }
+
+        return response()->json([
+            'id' => $chef->id,
+            'name' => $chef->name,
+            'email' => $chef->email,
+            'telephone' => $chef->telephone
+        ]);
     }
 }

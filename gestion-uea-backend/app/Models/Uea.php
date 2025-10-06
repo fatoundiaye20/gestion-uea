@@ -16,6 +16,7 @@ class Uea extends Model
         'filiere_id',
         'semestre',
         'niveau',
+        'created_by', // ✅ AJOUT
     ];
 
     public function filiere()
@@ -26,6 +27,12 @@ class Uea extends Model
     public function seances()
     {
         return $this->hasMany(Seance::class);
+    }
+
+    // ✅ AJOUT - Relation avec le créateur
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     // Calcul du volume horaire effectué

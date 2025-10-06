@@ -42,6 +42,12 @@ class User extends Authenticatable
         return $this->hasMany(Seance::class, 'enseignant_id');
     }
 
+    // ✅ AJOUT - Relation avec les UEAs créées
+    public function ueas()
+    {
+        return $this->hasMany(Uea::class, 'created_by');
+    }
+
     // Scopes
     public function scopeEnseignants($query)
     {

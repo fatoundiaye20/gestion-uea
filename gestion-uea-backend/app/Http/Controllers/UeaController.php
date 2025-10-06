@@ -11,7 +11,8 @@ class UeaController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Uea::with(['filiere', 'seances']);
+        // ✅ MODIFICATION - Ajouter seances.enseignant et createdBy
+        $query = Uea::with(['filiere', 'seances.enseignant', 'createdBy']);
 
         if ($request->has('filiere_id')) {
             $query->where('filiere_id', $request->filiere_id);
@@ -32,6 +33,23 @@ class UeaController extends Controller
             $uea->volume_horaire_restant = $uea->volume_horaire_restant;
             $uea->taux_execution = $uea->taux_execution;
             $uea->est_terminee = $uea->est_terminee;
+            
+            // ✅ AJOUT - Récupérer les enseignants uniques
+            if ($uea->seances) {
+                $enseignants = $uea->seances->pluck('enseignant')->unique('id')->filter()->values();
+                $uea->enseignants = $enseignants;
+            }
+            
+            // ✅ AJOUT - Ajouter le créateur avec son rôle
+            if ($uea->createdBy) {
+                $uea->created_by = [
+                    'name' => $uea->createdBy->name,
+                    'role' => $uea->createdBy->role
+                ];
+            }
+            
+            // Masquer les séances pour alléger la réponse
+            unset($uea->seances);
         });
 
         return response()->json($ueas);
@@ -53,7 +71,11 @@ class UeaController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $uea = Uea::create($request->all());
+        // ✅ AJOUT - Ajouter l'utilisateur connecté comme créateur
+        $data = $request->all();
+        $data['created_by'] = $request->user()->id;
+        
+        $uea = Uea::create($data);
 
         return response()->json([
             'message' => 'UEA créée avec succès',

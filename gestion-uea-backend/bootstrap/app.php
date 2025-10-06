@@ -12,14 +12,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Configuration pour les APIs
+        // Active les cookies et sessions pour les APIs
         $middleware->statefulApi();
-        
-        // Middleware pour les routes API
+
+        // Middleware Sanctum pour reconnaître les requêtes frontend
         $middleware->api(prepend: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
-        
+
         // Exclure la vérification CSRF pour les routes API
         $middleware->validateCsrfTokens(except: [
             'api/*'

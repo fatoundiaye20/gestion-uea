@@ -13,7 +13,7 @@ import EnseignantDashboard from './pages/enseignant/Dashboard';
 import AssistantDashboard from './pages/assistant/Dashboard';
 import Unauthorized from './pages/Unauthorized';
 import NotFound from './pages/NotFound';
-import About from './pages/about';
+import About from './pages/About';
 
 function App() {
   return (

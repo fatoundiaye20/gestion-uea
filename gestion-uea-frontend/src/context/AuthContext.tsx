@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import { authAPI } from '../services/api';
+import { apiClient } from '../api/client';
 import type { User } from '../types';
 import type { AuthContextType } from '../types';
 
@@ -16,46 +16,45 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
 
   useEffect(() => {
-  const loadUser = async () => {
-    const savedToken = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
+    const loadUser = async () => {
+      const savedToken = localStorage.getItem('token');
 
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
+      if (savedToken) {
+        try {
+          // Utiliser apiClient au lieu de authAPI.me()
+          const response = await apiClient('/auth/me');
+          const userFromAPI = response.user;
 
-      try {
-        const response = await authAPI.me();
+          console.log("✅ Utilisateur depuis /me :", userFromAPI);
 
-        // ✅ Correction ici : lire directement response.data
-        const userFromAPI = response.data.user || response.data;
+          if (!userFromAPI || !userFromAPI.role) {
+            console.warn("⚠️ Utilisateur invalide ou rôle manquant");
+            logout();
+            return;
+          }
 
-        console.log("Utilisateur depuis /me :", userFromAPI);
-
-        if (!userFromAPI || !userFromAPI.role) {
-          console.warn("Utilisateur invalide ou rôle manquant :", userFromAPI);
+          setUser(userFromAPI);
+          setToken(savedToken);
+          localStorage.setItem('user', JSON.stringify(userFromAPI));
+        } catch (error) {
+          console.error('❌ Token invalide:', error);
           logout();
-          return;
         }
-
-        setUser(userFromAPI);
-        localStorage.setItem('user', JSON.stringify(userFromAPI));
-      } catch (error) {
-        console.error('Token invalide:', error);
-        logout();
       }
-    }
-    setLoading(false);
-  };
+      setLoading(false);
+    };
 
-  loadUser();
-}, []);
-
+    loadUser();
+  }, []);
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await authAPI.login({ email, password });
-      const { access_token, user } = response.data;
+      const response = await apiClient('/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
+
+      const { token: access_token, user } = response;
 
       setToken(access_token);
       setUser(user);
@@ -65,25 +64,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       return { success: true, user };
     } catch (error: any) {
-      console.error('Erreur de connexion:', error);
+      console.error('❌ Erreur de connexion:', error);
       return {
         success: false,
-        message: error.response?.data?.message || 'Erreur de connexion'
+        message: error.message || 'Erreur de connexion'
       };
     }
   };
 
   const logout = async () => {
-    try {
-      await authAPI.logout();
-    } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
-    } finally {
-      setToken(null);
-      setUser(null);
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-    }
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/login';
   };
 
   const hasRole = (role: string): boolean => {

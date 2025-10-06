@@ -15,22 +15,53 @@ class DashboardController extends Controller
     public function statistiques(Request $request)
     {
         $user = $request->user();
-        $query = Uea::with(['seances', 'filiere']);
+        $queryUeas = Uea::with(['seances', 'filiere']);
+        $querySeances = Seance::query();
 
         // Filtrer selon le rôle
         if ($user->role === 'responsable_metier' && $user->filiere_id) {
-            $query->where('filiere_id', $user->filiere_id);
+            $queryUeas->where('filiere_id', $user->filiere_id);
+            $querySeances->whereHas('uea', function($q) use ($user) {
+                $q->where('filiere_id', $user->filiere_id);
+            });
         }
 
-        $ueas = $query->get();
+        $ueas = $queryUeas->get();
+        
+        // Statistiques des séances
+        $totalSeances = $querySeances->count();
+        $seancesRealisees = $querySeances->where('statut', 'realisee')->count();
+        $seancesValidees = $querySeances->where('statut', 'validee')->count();
+        $seancesEnAttente = $querySeances->where('statut', 'en_attente')->count();
+
+        // Statistiques des UEAs
+        $totalUeas = $ueas->count();
+        $ueasTerminees = $ueas->filter(function($uea) {
+            return $uea->est_terminee;
+        })->count();
+        
+        $ueasEnCours = $ueas->filter(function($uea) {
+            return !$uea->est_terminee && $uea->volume_horaire_effectue > 0;
+        })->count();
+        
+        $ueasProgrammees = $ueas->filter(function($uea) {
+            return $uea->volume_horaire_effectue == 0;
+        })->count();
 
         $statistiques = [
             'resume_global' => [
-                'total_ueas' => $ueas->count(),
-                'ueas_terminees' => $ueas->where('est_terminee', true)->count(),
-                'ueas_en_cours' => $ueas->where('est_terminee', false)->where('volume_horaire_effectue', '>', 0)->count(),
-                'ueas_non_commencees' => $ueas->where('volume_horaire_effectue', 0)->count(),
-                'taux_completion_global' => $ueas->count() > 0 ? round($ueas->sum('taux_execution') / $ueas->count(), 2) : 0,
+                // Statistiques séances
+                'total_seances' => $totalSeances,
+                'seances_realisees' => $seancesRealisees,
+                'seances_en_cours' => $seancesValidees,
+                'seances_programmees' => $seancesEnAttente,
+                
+                // Statistiques UEAs
+                'total_ueas' => $totalUeas,
+                'ueas_terminees' => $ueasTerminees,
+                'ueas_en_cours' => $ueasEnCours,
+                'ueas_non_commencees' => $ueasProgrammees,
+                'taux_completion_global' => $totalUeas > 0 ? round($ueas->sum('taux_execution') / $totalUeas, 2) : 0,
             ],
             'par_filiere' => [],
             'ueas_details' => []
@@ -38,7 +69,7 @@ class DashboardController extends Controller
 
         // Statistiques par filière (seulement pour chef_dep)
         if ($user->role === 'chef_dep') {
-            $filieres = \App\Models\Filiere::with(['ueas.seances'])->get();
+            $filieres = Filiere::with(['ueas.seances'])->get();
             
             foreach ($filieres as $filiere) {
                 $ueaFiliere = $filiere->ueas;

@@ -34,9 +34,19 @@ export const apiClient = async (endpoint: string, options: RequestInit = {}) => 
     const contentType = response.headers.get('content-type');
     
     if (!response.ok) {
-      // Essayer de lire le JSON d'erreur si disponible
+      // ✅ MODIFICATION : Lire les détails de l'erreur
       if (contentType?.includes('application/json')) {
         const errorData = await response.json();
+        console.error('❌ Détails de l\'erreur:', errorData);
+        
+        // Afficher les erreurs de validation
+        if (errorData.errors) {
+          const errorMessages = Object.entries(errorData.errors)
+            .map(([field, messages]) => `${field}: ${(messages as string[]).join(', ')}`)
+            .join('\n');
+          throw new Error(errorMessages);
+        }
+        
         throw new Error(errorData.message || `Erreur ${response.status}`);
       }
       throw new Error(`Erreur ${response.status}`);

@@ -42,6 +42,7 @@ const SeancesView = () => {
   });
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState<number | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -104,8 +105,24 @@ const SeancesView = () => {
       });
       setSuccess('Séance créée avec succès');
       setTimeout(() => setSuccess(''), 3000);
+      fetchData();
     } catch (err: any) {
       alert('Erreur: ' + err.message);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette séance ?')) return;
+    
+    setDeleting(id);
+    try {
+      await apiClient(`/seances/${id}`, { method: 'DELETE' });
+      setSeances(prev => prev.filter(s => s.id !== id));
+      alert('Séance supprimée avec succès');
+    } catch (err: any) {
+      alert('Erreur lors de la suppression: ' + err.message);
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -146,23 +163,25 @@ const SeancesView = () => {
               month: 'Mois',
               week: 'Semaine',
               day: 'Jour',
-              today: 'Aujourd’hui',
+              today: 'Aujourd\'hui',
               previous: '←',
               next: '→'
             }}
-            eventPropGetter={(event) => ({
-              style: {
-                backgroundColor:
-                  event.resource.statut === 'realisee' ? '#4caf50' :
-                  event.resource.statut === 'validee' ? '#2196f3' :
-                  '#ff9800',
-                color: '#fff',
-                borderRadius: '6px',
-                padding: '2px 6px',
-                fontWeight: 'bold',
-                border: 'none'
-              }
-            })}
+            eventPropGetter={(event) => {
+              return {
+                style: {
+                  backgroundColor:
+                    event.resource.statut === 'realisee' ? '#4caf50' :
+                    event.resource.statut === 'validee' ? '#2196f3' :
+                    '#ff9800',
+                  color: '#fff',
+                  borderRadius: '6px',
+                  padding: '2px 6px',
+                  fontWeight: 'bold',
+                  border: 'none'
+                }
+              };
+            }}
             style={{ height: '100%' }}
           />
         </div>
@@ -172,22 +191,22 @@ const SeancesView = () => {
         <h3>Créer une séance</h3>
         {success && <div style={{ color: 'green', marginBottom: '1rem' }}>{success}</div>}
         <div style={formStyle}>
-          <label>Date</label>
+          <label>Date *</label>
           <input type="date" name="date" value={form.date} onChange={handleChange} style={inputStyle} required />
 
-          <label>Heure début</label>
+          <label>Heure début *</label>
           <input type="time" name="heure_debut" value={form.heure_debut} onChange={handleChange} style={inputStyle} required />
 
-          <label>Heure fin</label>
+          <label>Heure fin *</label>
           <input type="time" name="heure_fin" value={form.heure_fin} onChange={handleChange} style={inputStyle} required />
 
-          <label>Durée</label>
+          <label>Durée *</label>
           <select name="duree" value={form.duree} onChange={handleChange} style={inputStyle} required>
             <option value="4h">4 heures</option>
             <option value="8h">8 heures</option>
           </select>
 
-          <label>UEA</label>
+          <label>UEA *</label>
           <select name="uea_id" value={form.uea_id} onChange={handleChange} style={inputStyle} required>
             <option value="">Sélectionner une UEA</option>
             {ueas.map(u => (
@@ -197,7 +216,7 @@ const SeancesView = () => {
             ))}
           </select>
 
-          <label>Enseignant</label>
+          <label>Enseignant *</label>
           <select name="enseignant_id" value={form.enseignant_id} onChange={handleChange} style={inputStyle} required>
             <option value="">Sélectionner un enseignant</option>
             {enseignants.map(e => (
@@ -207,7 +226,7 @@ const SeancesView = () => {
             ))}
           </select>
 
-          <label>Salle</label>
+          <label>Salle *</label>
           <select name="salle_id" value={form.salle_id} onChange={handleChange} style={inputStyle} required>
             <option value="">Sélectionner une salle</option>
             {salles.map(s => (
@@ -234,22 +253,45 @@ const SeancesView = () => {
                 <th style={thStyle}>Salle</th>
                 <th style={thStyle}>Durée</th>
                 <th style={thStyle}>Statut</th>
+                <th style={thStyle}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {seances.map((s, index) => (
-                <tr key={s.id} style={{ backgroundColor: index % 2 === 0 ? '#fff' : '#f9f9f9' }}>
-                  <td style={tdStyle}>{new Date(s.date).toLocaleDateString('fr-FR')}</td>
-                  <td style={tdStyle}>{s.heure_debut} - {s.heure_fin}</td>
-                  <td style={tdStyle}>{s.uea?.code} - {s.uea?.nom}</td>
-                  <td style={tdStyle}>{s.enseignant?.name}</td>
-                  <td style={tdStyle}>{s.salle?.nom}</td>
-                  <td style={tdStyle}>{s.duree}</td>
-                  <td style={tdStyle}>
-                    <span style={statusStyle(s.statut)}>{s.statut}</span>
+              {seances.length === 0 ? (
+                <tr>
+                  <td colSpan={8} style={{ ...tdStyle, textAlign: 'center', padding: '2rem', color: '#666' }}>
+                    Aucune séance enregistrée
                   </td>
                 </tr>
-              ))}
+              ) : (
+                seances.map((s, index) => (
+                  <tr key={s.id} style={{ backgroundColor: index % 2 === 0 ? '#fff' : '#f9f9f9' }}>
+                    <td style={tdStyle}>{new Date(s.date).toLocaleDateString('fr-FR')}</td>
+                    <td style={tdStyle}>{s.heure_debut} - {s.heure_fin}</td>
+                    <td style={tdStyle}>{s.uea?.code} - {s.uea?.nom}</td>
+                    <td style={tdStyle}>{s.enseignant?.name}</td>
+                    <td style={tdStyle}>{s.salle?.nom}</td>
+                    <td style={tdStyle}>{s.duree}</td>
+                    <td style={tdStyle}>
+                      <span style={statusStyle(s.statut)}>{s.statut}</span>
+                    </td>
+                    <td style={tdStyle}>
+                      <button 
+                        onClick={() => handleDelete(s.id)}
+                        disabled={deleting === s.id}
+                        style={{
+                          ...deleteButtonStyle,
+                          opacity: deleting === s.id ? 0.5 : 1,
+                          cursor: deleting === s.id ? 'not-allowed' : 'pointer'
+                        }}
+                        title="Supprimer"
+                      >
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -319,5 +361,15 @@ const statusStyle = (statut: string): React.CSSProperties => ({
   color: '#fff',
   fontWeight: 'bold'
 });
+
+const deleteButtonStyle: React.CSSProperties = { 
+  padding: '0.5rem', 
+  backgroundColor: '#dc3545', 
+  color: '#fff', 
+  border: 'none', 
+  borderRadius: '4px', 
+  cursor: 'pointer',
+  fontSize: '1rem'
+};
 
 export default SeancesView;

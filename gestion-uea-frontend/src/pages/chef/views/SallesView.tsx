@@ -22,6 +22,7 @@ const SallesView = () => {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(true);
   const [mode, setMode] = useState<'form' | 'list'>('form');
+  const [deleting, setDeleting] = useState<number | null>(null);
 
   useEffect(() => {
     fetchSalles();
@@ -72,6 +73,21 @@ const SallesView = () => {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette salle ?')) return;
+    
+    setDeleting(id);
+    try {
+      await apiClient(`/salles/${id}`, { method: 'DELETE' });
+      setSalles(prev => prev.filter(s => s.id !== id));
+      alert('Salle supprimée avec succès');
+    } catch (err: any) {
+      alert('Erreur lors de la suppression: ' + err.message);
+    } finally {
+      setDeleting(null);
+    }
+  };
+
   if (loading) return <div style={{ textAlign: 'center', padding: '2rem' }}>Chargement...</div>;
 
   return (
@@ -84,37 +100,63 @@ const SallesView = () => {
           </div>
           {success && <div style={{ color: 'green', marginBottom: '1rem' }}>{success}</div>}
           <div style={formStyle}>
-            <label>Nom</label>
-            <input name="nom" value={form.nom} onChange={handleChange} style={inputStyle} />
+            <label>Nom *</label>
+            <input name="nom" value={form.nom} onChange={handleChange} style={inputStyle} placeholder="Ex: Salle A101" />
 
             <label>Capacité (optionnel)</label>
-            <input name="capacite" value={form.capacite} onChange={handleChange} style={inputStyle} />
+            <input name="capacite" type="number" value={form.capacite} onChange={handleChange} style={inputStyle} placeholder="Ex: 50" />
 
             <label>Description (optionnel)</label>
-            <textarea name="description" value={form.description} onChange={handleChange} style={inputStyle} />
+            <textarea name="description" value={form.description} onChange={handleChange} style={inputStyle} placeholder="Description de la salle" />
 
             <button onClick={handleSubmit} style={buttonStyle}>Créer</button>
           </div>
         </>
       ) : (
         <>
-          <h3>Liste des salles ({salles.length})</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h3>Liste des salles ({salles.length})</h3>
+            <button onClick={() => setMode('form')} style={buttonStyle}>➕ Ajouter une salle</button>
+          </div>
           <table style={tableStyle}>
             <thead>
               <tr>
                 <th style={thStyle}>Nom</th>
                 <th style={thStyle}>Capacité</th>
                 <th style={thStyle}>Description</th>
+                <th style={thStyle}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {salles.map(s => (
-                <tr key={s.id}>
-                  <td style={tdStyle}>{s.nom}</td>
-                  <td style={tdStyle}>{s.capacite || '-'}</td>
-                  <td style={tdStyle}>{s.description || '-'}</td>
+              {salles.length === 0 ? (
+                <tr>
+                  <td colSpan={4} style={{ ...tdStyle, textAlign: 'center', padding: '2rem', color: '#666' }}>
+                    Aucune salle enregistrée
+                  </td>
                 </tr>
-              ))}
+              ) : (
+                salles.map(s => (
+                  <tr key={s.id}>
+                    <td style={tdStyle}>{s.nom}</td>
+                    <td style={tdStyle}>{s.capacite || '-'}</td>
+                    <td style={tdStyle}>{s.description || '-'}</td>
+                    <td style={tdStyle}>
+                      <button 
+                        onClick={() => handleDelete(s.id)}
+                        disabled={deleting === s.id}
+                        style={{
+                          ...deleteButtonStyle,
+                          opacity: deleting === s.id ? 0.5 : 1,
+                          cursor: deleting === s.id ? 'not-allowed' : 'pointer'
+                        }}
+                        title="Supprimer"
+                      >
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
 
@@ -139,6 +181,13 @@ const SallesView = () => {
                   </tr>
                 )) || []
               )}
+              {salles.every(s => !s.seances || s.seances.length === 0) && (
+                <tr>
+                  <td colSpan={4} style={{ ...tdStyle, textAlign: 'center', padding: '1rem', color: '#666' }}>
+                    Aucune séance programmée
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
 
@@ -155,5 +204,14 @@ const buttonStyle: React.CSSProperties = { padding: '0.75rem', backgroundColor: 
 const tableStyle: React.CSSProperties = { width: '100%', borderCollapse: 'collapse', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', marginTop: '1rem' };
 const thStyle: React.CSSProperties = { textAlign: 'center', padding: '0.75rem', backgroundColor: '#f0f0f0', fontWeight: 'bold', borderBottom: '1px solid #ccc' };
 const tdStyle: React.CSSProperties = { textAlign: 'center', padding: '0.75rem', borderBottom: '1px solid #eee' };
+const deleteButtonStyle: React.CSSProperties = { 
+  padding: '0.5rem', 
+  backgroundColor: '#dc3545', 
+  color: '#fff', 
+  border: 'none', 
+  borderRadius: '4px', 
+  cursor: 'pointer',
+  fontSize: '1rem'
+};
 
 export default SallesView;

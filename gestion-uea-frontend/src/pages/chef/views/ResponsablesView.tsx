@@ -24,6 +24,7 @@ const ResponsablesView = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [mode, setMode] = useState<'form' | 'list'>('form');
+  const [deleting, setDeleting] = useState<number | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -47,8 +48,8 @@ const ResponsablesView = () => {
 
   const validate = () => {
     if (!form.name.trim()) return 'Nom requis';
-    if (!form.email.includes('@')) return 'Email invalide';
-    if (!/^\d{9}$/.test(form.telephone)) return 'Téléphone invalide';
+    if (!form.email.includes('@isep-thies.edu.sn')) return 'Email doit être @isep-thies.edu.sn';
+    if (!/^\d{9}$/.test(form.telephone)) return 'Téléphone invalide (9 chiffres)';
     if (!form.filiere_id) return 'Filière requise';
     return null;
   };
@@ -69,17 +70,32 @@ const ResponsablesView = () => {
     }
 
     try {
-      const response = await apiClient('/users', {
+      const response = await apiClient('/create-user', {
         method: 'POST',
         body: JSON.stringify({ ...form, role: 'responsable_metier' })
       });
-      setResponsables(prev => [...prev, response.user]);
       setForm({ name: '', email: '', telephone: '', filiere_id: '' });
-      setSuccess('Responsable ajouté avec succès');
-      setTimeout(() => setSuccess(''), 3000);
+      setSuccess('Responsable ajouté avec succès. Email envoyé avec identifiants.');
+      setTimeout(() => setSuccess(''), 5000);
       fetchData();
     } catch (err: any) {
       alert('Erreur: ' + err.message);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce responsable ?')) return;
+    
+    setDeleting(id);
+    try {
+      await apiClient(`/users/${id}`, { method: 'DELETE' });
+      setResponsables(prev => prev.filter(r => r.id !== id));
+      alert('Responsable supprimé avec succès');
+      fetchData();
+    } catch (err: any) {
+      alert('Erreur lors de la suppression: ' + err.message);
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -94,18 +110,18 @@ const ResponsablesView = () => {
             <h3>Créer un responsable de métier</h3>
             <button onClick={() => setMode('list')} style={buttonStyle}>📋 Voir la liste</button>
           </div>
-          {success && <div style={{ color: 'green', marginBottom: '1rem' }}>{success}</div>}
+          {success && <div style={{ color: 'green', marginBottom: '1rem', padding: '1rem', backgroundColor: '#d4edda', borderRadius: '4px' }}>{success}</div>}
           <div style={formStyle}>
-            <label>Nom</label>
-            <input name="name" value={form.name} onChange={handleChange} style={inputStyle} />
+            <label>Nom *</label>
+            <input name="name" value={form.name} onChange={handleChange} style={inputStyle} placeholder="Prénom Nom" />
 
-            <label>Email</label>
-            <input name="email" value={form.email} onChange={handleChange} style={inputStyle} />
+            <label>Email *</label>
+            <input name="email" value={form.email} onChange={handleChange} style={inputStyle} placeholder="prenom.nom@isep-thies.edu.sn" />
 
-            <label>Téléphone</label>
-            <input name="telephone" value={form.telephone} onChange={handleChange} style={inputStyle} />
+            <label>Téléphone *</label>
+            <input name="telephone" value={form.telephone} onChange={handleChange} style={inputStyle} placeholder="771234567" />
 
-            <label>Filière</label>
+            <label>Filière *</label>
             <select name="filiere_id" value={form.filiere_id} onChange={handleChange} style={inputStyle}>
               <option value="">Choisir une filière</option>
               {filieres.map(f => {
@@ -123,7 +139,10 @@ const ResponsablesView = () => {
         </>
       ) : (
         <>
-          <h3>Responsables de métier ({responsables.length})</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h3>Responsables de métier ({responsables.length})</h3>
+            <button onClick={() => setMode('form')} style={buttonStyle}>➕ Ajouter un responsable</button>
+          </div>
           <table style={tableStyle}>
             <thead>
               <tr>
@@ -133,22 +152,44 @@ const ResponsablesView = () => {
                 <th style={thStyle}>Filière</th>
                 <th style={thStyle}>UEAs</th>
                 <th style={thStyle}>Séances</th>
+                <th style={thStyle}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {responsables.map(r => (
-                <tr key={r.id}>
-                  <td style={tdStyle}>{r.name}</td>
-                  <td style={tdStyle}>{r.email}</td>
-                  <td style={tdStyle}>{r.telephone}</td>
-                  <td style={tdStyle}>{r.filiere?.nom || '-'}</td>
-                  <td style={tdStyle}>{r.ueas?.length || 0}</td>
-                  <td style={tdStyle}>{r.seances?.length || 0}</td>
+              {responsables.length === 0 ? (
+                <tr>
+                  <td colSpan={7} style={{ ...tdStyle, textAlign: 'center', padding: '2rem', color: '#666' }}>
+                    Aucun responsable enregistré
+                  </td>
                 </tr>
-              ))}
+              ) : (
+                responsables.map(r => (
+                  <tr key={r.id}>
+                    <td style={tdStyle}>{r.name}</td>
+                    <td style={tdStyle}>{r.email}</td>
+                    <td style={tdStyle}>{r.telephone}</td>
+                    <td style={tdStyle}>{r.filiere?.nom || '-'}</td>
+                    <td style={tdStyle}>{r.ueas?.length || 0}</td>
+                    <td style={tdStyle}>{r.seances?.length || 0}</td>
+                    <td style={tdStyle}>
+                      <button 
+                        onClick={() => handleDelete(r.id)}
+                        disabled={deleting === r.id}
+                        style={{
+                          ...deleteButtonStyle,
+                          opacity: deleting === r.id ? 0.5 : 1,
+                          cursor: deleting === r.id ? 'not-allowed' : 'pointer'
+                        }}
+                        title="Supprimer"
+                      >
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
-          <button onClick={() => setMode('form')} style={{ marginTop: '1rem' }}>↩ Retour au formulaire</button>
         </>
       )}
     </div>
@@ -161,5 +202,14 @@ const buttonStyle: React.CSSProperties = { padding: '0.75rem', backgroundColor: 
 const tableStyle: React.CSSProperties = { width: '100%', borderCollapse: 'collapse', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', marginTop: '1rem' };
 const thStyle: React.CSSProperties = { textAlign: 'center', padding: '0.75rem', backgroundColor: '#f0f0f0', fontWeight: 'bold', borderBottom: '1px solid #ccc' };
 const tdStyle: React.CSSProperties = { textAlign: 'center', padding: '0.75rem', borderBottom: '1px solid #eee' };
+const deleteButtonStyle: React.CSSProperties = { 
+  padding: '0.5rem', 
+  backgroundColor: '#dc3545', 
+  color: '#fff', 
+  border: 'none', 
+  borderRadius: '4px', 
+  cursor: 'pointer',
+  fontSize: '1rem'
+};
 
 export default ResponsablesView;

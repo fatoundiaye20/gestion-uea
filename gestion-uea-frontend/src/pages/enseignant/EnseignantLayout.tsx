@@ -114,8 +114,7 @@ const EnseignantLayout = ({ active, onNavigate, children }: Props) => {
             padding: '0.5rem 1rem',
             borderRadius: '6px',
             cursor: 'pointer',
-            fontWeight: 'bold',
-            width: '100%'
+            fontWeight: 'bold'
           }}>
             Déconnexion
           </button>

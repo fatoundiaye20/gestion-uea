@@ -6,18 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
         Schema::table('ueas', function (Blueprint $table) {
-            $table->foreignId('created_by')->nullable()->after('niveau')->constrained('users')->onDelete('set null');
+            //
         });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
         Schema::table('ueas', function (Blueprint $table) {
-            $table->dropForeign(['created_by']);
-            $table->dropColumn('created_by');
+            //
         });
     }
 };

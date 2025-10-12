@@ -1,0 +1,234 @@
+:root {
+  --bleu-clair: #006699;
+  --bleu-profond: #003366;
+  --bleu-fonce: #00264d;
+  --fond-page: #e6f0ff;
+  --blanc: #ffffff;
+  --gris-clair: #f0f0f0;
+  --orange: #fb923c;
+  --vert: #2e7d32;
+  --rouge: #c62828;
+}
+
+/* Container principal */
+.page-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--fond-page);
+  font-family: 'Arial', sans-serif;
+  color: var(--bleu-fonce);
+}
+
+/* Layout principal */
+.main-layout {
+  display: flex;
+}
+
+/* Sidebar fixe */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: var(--blanc);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  border-radius: 5px;
+  color: var(--bleu-fonce);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.nav-item:hover,
+.nav-item-active {
+  background-color: var(--bleu-clair);
+  color: var(--blanc);
+}
+
+/* Main content */
+.content {
+  margin-left: 270px;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Page title */
+.page-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--bleu-profond);
+  margin-bottom: 20px;
+  border-left: 5px solid var(--bleu-clair);
+  padding-left: 10px;
+}
+
+/* Filters */
+.filters-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid var(--bleu-clair);
+  background-color: var(--blanc);
+  color: var(--bleu-fonce);
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--bleu-profond);
+}
+
+/* Chart */
+.chart-container {
+  margin-bottom: 20px;
+  height: 300px;
+}
+
+/* Alert */
+.alert-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #ffebee;
+  padding: 12px 15px;
+  border-radius: 6px;
+  border-left: 4px solid var(--rouge);
+  color: var(--rouge);
+  margin-bottom: 20px;
+}
+
+/* Fiches / cartes */
+.fiches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.fiche-card {
+  background-color: var(--gris-clair);
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column; /* vertical pour pousser le bouton */
+  justify-content: space-between;
+  gap: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.fiche-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.fiche-avatar {
+  width: 40px;
+  height: 40px;
+  background-color: var(--bleu-clair);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--blanc);
+}
+
+.fiche-title {
+  margin: 0;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.fiche-status {
+  margin: 3px 0 0;
+  font-size: 0.9rem;
+}
+
+.btn-message {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  background-color: var(--bleu-clair);
+  color: var(--blanc);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-message:hover {
+  background-color: var(--bleu-profond);
+}
+
+/* Statuts */
+.statut-non-rempli { color: var(--rouge); font-weight: bold; }
+.statut-en-retard { color: var(--orange); font-weight: bold; }
+.statut-validée { color: var(--vert); font-weight: bold; }
+
+/* Assistance */
+.assistance-box {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: var(--bleu-clair);
+  color: var(--blanc);
+  border-radius: 8px;
+}
+
+.assistance-title {
+  margin-bottom: 10px;
+}
+
+.assistance-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.assistance-text {
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
+  .content {
+    margin-left: 0;
+    margin-top: 0;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+}

@@ -16,6 +16,7 @@ const Home: React.FC = () => {
           <img src={DrapeauSenegal} alt="Drapeau du Sénégal" className="flag" />
           <span className="header-title">
             Ministère de l'Enseignement Supérieur, de la Recherche et de l'Innovation
+            <br /><p className="senegal">Du Sénégal</p>
           </span>
         </div>
 

@@ -14,6 +14,10 @@ import AssistantDashboard from './pages/assistant/Dashboard';
 import Unauthorized from './pages/Unauthorized';
 import NotFound from './pages/NotFound';
 import About from './pages/about';
+import SuiviRegistres from './pages/assistant/SuiviRegistre';
+import SuiviRegistre from "./pages/assistant/SuiviRegistre";
+
+import Messages from './pages/assistant/Message';
 
 function App() {
   return (
@@ -44,6 +48,25 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/assistant/messages"
+            element={
+              <ProtectedRoute allowedRoles={['assistant']}>
+                <Messages />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ✅ Route pour le suivi des registres (accessible uniquement aux assistants) */}
+<Route
+  path="/assistant/suivi-registre"
+  element={
+    <ProtectedRoute allowedRoles={['assistant']}>
+      <SuiviRegistre />
+    </ProtectedRoute>
+  }
+/>
+
 
           {/* ✅ Route pour enseignant */}
           <Route
@@ -54,6 +77,8 @@ function App() {
               </ProtectedRoute>
             }
           />
+           
+          
 
           {/* ✅ Route pour assistant */}
           <Route

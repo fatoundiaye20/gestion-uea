@@ -8,6 +8,7 @@ type Seance = {
   heure_fin: string;
   duree: string;
   statut: string;
+  enseignant_id: number;
   uea?: { id: number; nom: string; code: string };
   salle?: { nom: string };
 };
@@ -27,24 +28,34 @@ const AccueilView = () => {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const seancesData = await apiClient('/seances');
-      setSeances(seancesData);
+const fetchData = async () => {
+  try {
+    // Récupérer l'ID de l'enseignant
+    const meData = await apiClient('/me');
+    const currentEnseignantId = meData.user.id;
 
-      // Extraire les UEAs uniques
-      const ueaUniques = [...new Map(
-        seancesData
-          .filter((s: Seance) => s.uea)
-          .map((s: Seance) => [s.uea?.id, s.uea])
-      ).values()];
-      setUeas(ueaUniques as Uea[]);
-    } catch (err) {
-      console.error('Erreur chargement données:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const seancesData = await apiClient('/seances');
+    
+    // Filtrer les séances de cet enseignant
+    const seancesEnseignant = seancesData.filter(
+      (s: Seance) => s.enseignant_id === currentEnseignantId
+    );
+    
+    setSeances(seancesEnseignant);
+
+    // Extraire les UEAs uniques de SES séances
+    const ueaUniques = [...new Map(
+      seancesEnseignant
+        .filter((s: Seance) => s.uea)
+        .map((s: Seance) => [s.uea?.id, s.uea])
+    ).values()];
+    setUeas(ueaUniques as Uea[]);
+  } catch (err) {
+    console.error('Erreur chargement données:', err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const today = new Date().toISOString().split('T')[0];
   const seancesAujourd = seances.filter(s => s.date === today);

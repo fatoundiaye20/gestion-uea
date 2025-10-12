@@ -8,23 +8,37 @@ type Seance = {
   heure_fin: string;
   duree: string;
   statut: string;
+  enseignant_id: number;
   uea?: { code: string; nom: string };
   salle?: { nom: string };
 };
 
+
 const SeancesView = () => {
   const [seances, setSeances] = useState<Seance[]>([]);
+  // const [enseignantId, setEnseignantId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [filtreStatut, setFiltreStatut] = useState('');
 
   useEffect(() => {
-    fetchSeances();
+    fetchData();
   }, []);
 
-  const fetchSeances = async () => {
+  const fetchData = async () => {
     try {
-      const data = await apiClient('/seances');
-      setSeances(data);
+      // Récupérer les infos de l'enseignant connecté
+      const meData = await apiClient('/me');
+      const currentEnseignantId = meData.user.id;
+      // setEnseignantId(currentEnseignantId);
+
+      // Récupérer toutes les séances
+      const allSeances = await apiClient('/seances');
+
+      // Filtrer pour ne garder que les séances de cet enseignant
+      const seancesEnseignant = allSeances.filter(
+        (s: Seance) => s.enseignant_id === currentEnseignantId
+      );
+      setSeances(seancesEnseignant);
     } catch (err) {
       console.error('Erreur chargement séances:', err);
     } finally {
@@ -107,7 +121,7 @@ const SeancesView = () => {
             {seancesFiltrees.length === 0 ? (
               <tr>
                 <td colSpan={6} style={{ ...tdStyle, textAlign: 'center', padding: '2rem', color: '#666' }}>
-                  Aucune séance
+                  Aucune séance assignée
                 </td>
               </tr>
             ) : (

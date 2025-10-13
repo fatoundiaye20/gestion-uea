@@ -59,27 +59,26 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#e6fff5] flex items-center justify-center font-sans">
+    <div className="min-h-screen bg-[#f2f2f2] flex items-center justify-center font-sans   ">
       <Toaster />
-      <div className="grid grid-cols-1 rounded-3xl md:grid-cols-2 w-233 max-w-5xl bg-[#1c2128] overflow-hidden shadow-xl">
+      <div className="grid grid-cols-1 rounded-3xl md:grid-cols-2 w-249 max-w-9xl  bg-[#010724] overflow-hidden shadow-xl ">
         {/* Section gauche avec image */}
-        <div className="flex w-98 items-center justify-center bg-[#3f2a02] p-6">
-          <img
+        <div  className="flex w-120 avatar items-center justify-center bg-[#010724] p-6">
+          {/* <img
             src="/images/graduation.jpg"
             alt="Illustration"
             className="max-h-[400px] w-auto object-contain"
-          />
+          /> */}
         </div>
 
         {/* Section droite */}
         <form
           onSubmit={handleSubmit}
-          className="p-10 flex flex-col justify-center items-center text-[rgb(234,239,244)] w-100"
-        >
+          className="p-10 flex flex-col justify-center items-center text-[rgb(234,239,244)] w-120 "> <br /> <br />
           <div className="w-full max-w-md">
-            <h2 className="text-3xl font-bold mb-6 text-center text-[rgb(234,239,244)]">Connexion</h2>
+            <h2 className="text-2xl font-bold mb-6  text-center text-[rgb(234,239,244)]">Connexion</h2>
 
-            <label className="mb-1 text-sm font-medium text-[rgb(234,239,244)]">Adresse email</label>
+            <label className="mb-1 text-sm  font-medium text-[rgb(234,239,244)]">Adresse email</label>
             <input
               type="email"
               name="email"
@@ -131,11 +130,13 @@ export default function Login() {
             <div className="flex justify-center w-full">
               <button
                 type="submit"
-                className="bg-[#f4eded] text-black font-semibold py-3 px-6 rounded-3xl hover:bg-[#475691] transition duration-200 w-72"
+                className="bg-[#708fde] h-10 text-black font-semibold py-3 px-6 rounded-3xl hover:bg-[#475691] transition duration-200 w-72"
               >
-                Entrer
+                Connectez
               </button>
+              
             </div>
+            <br /> <br />
           </div>
         </form>
       </div>

@@ -1,13 +1,31 @@
-import { Routes, Route } from 'react-router-dom';
-import ResponsableHome from './ResponsableHome';
+import { useState } from 'react';
+import ChefLayout from './ChefLayout';
+import StatistiquesView from './views/StatistiquesView';
+import SeancesView from './views/SeancesView';
+import EnseignantsView from './views/EnseignantsView';
+import ResponsablesView from './views/ResponsablesView';
+import AssistantsView from './views/AssistantsView';
+import NotificationsView from './views/NotificationsView';
+import ParametresView from './views/ParametresView';
+import UeasView from './views/UeasView';
+import SallesView from './views/SallesView';
 
-const ResponsableDashboard = () => {
+const Dashboard = () => {
+  const [activeSection, setActiveSection] = useState<'statistiques' | 'seances' | 'ueas' | 'salles' | 'enseignants' | 'responsables' | 'assistants' | 'notifications' | 'parametres'>('statistiques');
+
   return (
-    <Routes>
-      <Route path="home" element={<ResponsableHome />} />
-      <Route path="/" element={<ResponsableHome />} />
-    </Routes>
+    <ChefLayout active={activeSection} onNavigate={setActiveSection}>
+      {activeSection === 'statistiques' && <StatistiquesView />}
+      {activeSection === 'seances' && <SeancesView />}
+      {activeSection === 'ueas' && <UeasView />}
+      {activeSection === 'salles' && <SallesView />}
+      {activeSection === 'enseignants' && <EnseignantsView />}
+      {activeSection === 'responsables' && <ResponsablesView />}
+      {activeSection === 'assistants' && <AssistantsView />}
+      {activeSection === 'notifications' && <NotificationsView />}
+      {activeSection === 'parametres' && <ParametresView />}
+    </ChefLayout>
   );
 };
 
-export default ResponsableDashboard;
+export default Dashboard;

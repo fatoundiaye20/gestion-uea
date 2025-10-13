@@ -25,6 +25,8 @@ Route::prefix('api')->group(function () {
     // Routes protégées par Sanctum
     Route::middleware(['web', 'auth:sanctum'])->group(function () {
 
+        Route::get('/notifications/alerts', [NotificationController::class, 'getAlerts']);
+
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/me', [AuthController::class, 'me']);
         Route::post('/create-user', [AuthController::class, 'createUser']);

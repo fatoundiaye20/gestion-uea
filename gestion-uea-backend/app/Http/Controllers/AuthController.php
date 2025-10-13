@@ -54,9 +54,21 @@ class AuthController extends Controller
     public function createUser(Request $request)
     {
         // Seul le chef de département peut créer des utilisateurs
-        if (!$request->user() || $request->user()->role !== 'chef_dep') {
-            return response()->json(['message' => 'Seul le chef de département peut créer des utilisateurs'], 403);
+       $currentUser = $request->user();
+
+    if (!$currentUser || !in_array($currentUser->role, ['chef_dep', 'responsable_metier'])) {
+        return response()->json(['message' => 'Accès refusé'], 403);
+    }
+
+    if ($currentUser->role === 'responsable_metier') {
+        if (!in_array($request->role, ['enseignant', 'assistant'])) {
+            return response()->json(['message' => 'Non autorisé à créer ce type d\'utilisateur'], 403);
         }
+
+        $request->merge(['filiere_id' => $currentUser->filiere_id]);
+    }
+
+
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -183,4 +195,54 @@ class AuthController extends Controller
             ], 500);
         }
     }
+    public function getResponsableMetier(Request $request)
+{
+    $user = $request->user();
+
+    if (!$user || $user->role !== 'responsable_metier') {
+        return response()->json(['message' => 'Accès refusé'], 403);
+    }
+
+    return response()->json([
+        'name' => $user->name,
+        'email' => $user->email,
+        'telephone' => $user->telephone,
+        'filiere_id' => $user->filiere_id,
+        'specialite' => $user->specialite,
+    ]);
+}
+public function updateResponsableMetier(Request $request)
+{
+    $user = $request->user();
+
+    if (!$user || $user->role !== 'responsable_metier') {
+        return response()->json(['message' => 'Accès refusé'], 403);
+    }
+
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|regex:/@isep-thies\.edu\.sn$/|unique:users,email,' . $user->id,
+        'telephone' => 'nullable|string|max:20',
+        'specialite' => 'nullable|string|max:255',
+        'password' => 'nullable|string|min:6'
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 422);
+    }
+
+    $user->name = $request->name;
+    $user->email = $request->email;
+    $user->telephone = $request->telephone;
+    $user->specialite = $request->specialite;
+
+    if ($request->filled('password')) {
+        $user->password = Hash::make($request->password);
+    }
+
+    $user->save();
+
+    return response()->json(['message' => 'Profil mis à jour avec succès']);
+}
+
 }

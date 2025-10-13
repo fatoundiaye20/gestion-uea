@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { apiClient } from '../../../api/client';
-import { Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';        
 
 type Enseignant = {
   id: number;

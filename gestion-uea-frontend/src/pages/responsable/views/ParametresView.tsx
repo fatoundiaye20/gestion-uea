@@ -17,7 +17,8 @@ const ParametresView = () => {
       try {
         setLoading(true);
         // ✅ Utiliser l'endpoint correct
-        const data = await apiClient('/chef-departement');
+        const data = await apiClient('/responsable-metier');
+
         
         console.log('✅ Données reçues:', data);
 
@@ -47,7 +48,7 @@ const ParametresView = () => {
     e.preventDefault();
     
     try {
-      await apiClient('/chef-departement', {
+      await apiClient('/responsable-metier', {
         method: 'PUT',
         body: JSON.stringify(form)
       });

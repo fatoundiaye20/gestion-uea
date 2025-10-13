@@ -64,4 +64,5 @@ export const apiClient = async (endpoint: string, options: RequestInit = {}) => 
     console.error('❌ Erreur API:', error);
     throw error;
   }
+  
 };

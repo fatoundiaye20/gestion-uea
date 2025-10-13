@@ -18,7 +18,7 @@ type Assistant = { nom: string; specialite: string };
 type Notification = { message: string };
 type Enseignant = { nom: string; email: string; filiere: string };
 
-const ChefHome = () => {
+const ResponsableHome = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [stats, setStats] = useState({ reussite: 0, echec: 0 });
   const [seances, setSeances] = useState<Seance[]>([]);
@@ -183,4 +183,4 @@ const modalStyle = {
   }
 };
 
-export default ChefHome;
+export default ResponsableHome;

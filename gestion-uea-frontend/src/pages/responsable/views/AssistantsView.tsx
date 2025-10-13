@@ -50,7 +50,7 @@ const AssistantsView = () => {
         method: 'POST',
         body: JSON.stringify({
           ...form,
-          role: 'assistant_technique'
+          role: 'assistant'
         })
       });
 

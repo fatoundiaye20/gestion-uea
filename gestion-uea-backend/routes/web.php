@@ -109,4 +109,52 @@ Route::prefix('api')->group(function () {
     Route::get('/chef-departement', [UserController::class, 'getChef']);
     // ... autres routes
 });
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/responsable-metier', function (Request $request) {
+        $user = $request->user();
+
+        if (!$user || $user->role !== 'responsable_metier') {
+            return response()->json(['message' => 'Accès refusé'], 403);
+        }
+
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'telephone' => $user->telephone,
+            'specialite' => $user->specialite,
+            'filiere_id' => $user->filiere_id
+        ]);
+    });
+
+    Route::put('/responsable-metier', function (Request $request) {
+        $user = $request->user();
+
+        if (!$user || $user->role !== 'responsable_metier') {
+            return response()->json(['message' => 'Accès refusé'], 403);
+        }
+
+        $validated = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'telephone' => 'nullable|string|max:20',
+            'specialite' => 'nullable|string|max:255',
+            'password' => 'nullable|string|min:8'
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json(['errors' => $validated->errors()], 422);
+        }
+
+        $data = $request->only(['name', 'email', 'telephone', 'specialite']);
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
+
+        return response()->json(['message' => 'Responsable mis à jour avec succès']);
+    });
+});
+
 });

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import ChefLayout from './ChefLayout';
+import ChefLayout from './ResponsableLayout';
 import StatistiquesView from './views/StatistiquesView';
 import SeancesView from './views/SeancesView';
 import EnseignantsView from './views/EnseignantsView';
-import ResponsablesView from './views/ResponsablesView';
+
 import AssistantsView from './views/AssistantsView';
 import NotificationsView from './views/NotificationsView';
 import ParametresView from './views/ParametresView';
@@ -20,7 +20,7 @@ const Dashboard = () => {
       {activeSection === 'ueas' && <UeasView />}
       {activeSection === 'salles' && <SallesView />}
       {activeSection === 'enseignants' && <EnseignantsView />}
-      {activeSection === 'responsables' && <ResponsablesView />}
+      
       {activeSection === 'assistants' && <AssistantsView />}
       {activeSection === 'notifications' && <NotificationsView />}
       {activeSection === 'parametres' && <ParametresView />}

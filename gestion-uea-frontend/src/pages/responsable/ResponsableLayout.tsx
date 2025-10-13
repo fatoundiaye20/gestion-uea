@@ -3,7 +3,7 @@ import { apiClient } from '../../api/client';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import EventIcon from '@mui/icons-material/Event';
 import SchoolIcon from '@mui/icons-material/School';
-import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
+
 import BuildIcon from '@mui/icons-material/Build';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -17,14 +17,14 @@ type Props = {
   children: React.ReactNode;
 };
 
-const ChefLayout = ({ active, onNavigate, children }: Props) => {
+const ResponsableLayout = ({ active, onNavigate, children }: Props) => {
   const [chefName, setChefName] = useState('');
 
   useEffect(() => {
     const fetchChef = async () => {
       try {
         const data = await apiClient('/me');
-        setChefName(data?.name || 'Chef de Département');
+        setChefName(data?.name || 'Responsable de metier');
       } catch (err) {
         console.error('Erreur récupération chef:', err);
       }
@@ -47,7 +47,7 @@ const ChefLayout = ({ active, onNavigate, children }: Props) => {
     { key: 'ueas', label: 'UEA', icon: <MenuBookIcon /> },
     { key: 'salles', label: 'Salles', icon: <MeetingRoomIcon /> },
     { key: 'enseignants', label: 'Enseignants', icon: <SchoolIcon /> },
-    { key: 'responsables', label: 'Responsables', icon: <BusinessCenterIcon /> },
+    
     { key: 'assistants', label: 'Assistants', icon: <BuildIcon /> },
     { key: 'notifications', label: 'Notifications', icon: <NotificationsIcon /> },
     { key: 'parametres', label: 'Paramètres', icon: <SettingsIcon /> }
@@ -138,4 +138,4 @@ const ChefLayout = ({ active, onNavigate, children }: Props) => {
   );
 };
 
-export default ChefLayout;
+export default ResponsableLayout;

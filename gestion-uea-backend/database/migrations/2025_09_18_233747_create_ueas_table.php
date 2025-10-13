@@ -10,15 +10,27 @@ class CreateUeasTable extends Migration
     {
         Schema::create('ueas', function (Blueprint $table) {
             $table->id();
+
+            // Informations de base sur l'UEA
             $table->string('nom');                     // Nom de l'UEA
             $table->string('code')->unique();          // Code unique de l'UEA
+            $table->text('description')->nullable();   // Description de l'UEA
+            $table->integer('volume_horaire_total')->default(0); // Volume horaire total
+            $table->string('semestre');                // Semestre concerné
             $table->string('niveau')->nullable();      // Niveau de l'UEA (ex: Licence, Master)
-            $table->text('description')->nullable();  // Description de l'UEA
-            $table->unsignedBigInteger('created_by')->nullable(); // Créé par (FK vers users)
-            $table->timestamps();
 
-            // Clé étrangère vers users.id
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
+            // Relation avec la filière
+            $table->foreignId('filiere_id')
+                  ->constrained('filieres')
+                  ->onDelete('cascade');
+
+            // Relation avec le créateur (utilisateur)
+            $table->foreignId('created_by')
+                  ->nullable()
+                  ->constrained('users')
+                  ->onDelete('set null');
+
+            $table->timestamps();
         });
     }
 

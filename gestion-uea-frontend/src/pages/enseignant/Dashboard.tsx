@@ -1,13 +1,25 @@
-import { Routes, Route } from 'react-router-dom';
-import EnseignantHome from './EnseignantHome';
+import { useState } from 'react';
+import EnseignantLayout from './EnseignantLayout';
+import AccueilView from './views/AccueilView';
+import SeancesView from './views/SeancesView';
+import UeasView from './views/UeasView';
+import FichesView from './views/FichesView';
+import StatistiquesView from './views/StatistiquesView';
+import ParametresView from './views/ParametresView';
 
-const EnseignantDashboard = () => {
+const Dashboard = () => {
+  const [activeSection, setActiveSection] = useState<'accueil' | 'seances' | 'ueas' | 'fiches' | 'statistiques' | 'parametres'>('accueil');
+
   return (
-    <Routes>
-      <Route path="home" element={<EnseignantHome />} />
-      <Route path="/" element={<EnseignantHome />} />
-    </Routes>
+    <EnseignantLayout active={activeSection} onNavigate={setActiveSection}>
+      {activeSection === 'accueil' && <AccueilView />}
+      {activeSection === 'seances' && <SeancesView />}
+      {activeSection === 'ueas' && <UeasView />}
+      {activeSection === 'fiches' && <FichesView />}
+      {activeSection === 'statistiques' && <StatistiquesView />}
+      {activeSection === 'parametres' && <ParametresView />}
+    </EnseignantLayout>
   );
 };
 
-export default EnseignantDashboard;
+export default Dashboard;

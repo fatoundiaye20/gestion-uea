@@ -82,3 +82,16 @@ export interface AuthContextType {
   hasAnyRole: (roles: string[]) => boolean;
   isAuthenticated: boolean;
 }
+export interface Statistiques {
+  total_seances: number;
+  seances_prevues: number;
+  seances_validees: number;
+  seances_realisees: number;
+  total_participants: number;
+  taux_presence: number;
+  taux_satisfaction: number;
+  taux_execution_uea: number;
+  volume_horaire_total: number;
+  volume_horaire_effectue: number;
+  volume_horaire_restant: number;
+}

@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { toast, Toaster } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function Login() {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -130,7 +128,7 @@ export default function Login() {
             <div className="flex justify-center w-full">
               <button
                 type="submit"
-                className="bg-[#708fde] h-10 text-black font-semibold py-3 px-6 rounded-3xl hover:bg-[#475691] transition duration-200 w-72"
+                className="bg-[#f4eded] text-black font-semibold py-3 px-6 rounded-3xl hover:bg-[#475691] transition duration-200 w-72"
               >
                 Connectez
               </button>

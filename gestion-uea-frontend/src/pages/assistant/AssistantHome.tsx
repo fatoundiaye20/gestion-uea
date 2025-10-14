@@ -751,16 +751,9 @@ const NotificationsPage: React.FC<{ theme: string }> = ({ theme }) => {
   const fetchNotifications = async () => {
     try {
       const data = await apiClient('/notifications');
-      setNotifications(data || []);
+      setNotifications(data);
     } catch (error) {
       console.error('Erreur chargement notifications:', error);
-      // If our apiClient attached status/body, show it
-      const anyErr: any = error;
-      if (anyErr.status) {
-        toast.error(`Notifications API ${anyErr.status}${anyErr.body ? `: ${anyErr.body}` : ''}`);
-      } else {
-        toast.error(anyErr.message || 'Erreur lors du chargement des notifications');
-      }
     } finally {
       setLoading(false);
     }

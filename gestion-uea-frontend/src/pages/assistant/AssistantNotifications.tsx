@@ -16,7 +16,7 @@ interface AssistantNotificationsProps {
 }
 
 // ============= API CLIENT =============
-const API_BASE = 'http://localhost:8000/api/notifications';
+const API_BASE = 'http://localhost:8000/api/';
 
 const apiClient = async (endpoint: string, options?: RequestInit) => {
   const token = localStorage.getItem('token');

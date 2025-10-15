@@ -288,7 +288,7 @@ const inputStyle: React.CSSProperties = {
 
 const buttonStyle: React.CSSProperties = {
   padding: '0.75rem',
-  backgroundColor: '#1976d2',
+  backgroundColor: '#057a26', 
   color: '#fff',
   border: 'none',
   borderRadius: '4px',
@@ -307,9 +307,10 @@ const tableStyle: React.CSSProperties = {
 const thStyle: React.CSSProperties = {
   textAlign: 'center',
   padding: '0.75rem',
-  backgroundColor: '#f0f0f0',
+  backgroundColor: '#eaf6ee', 
   fontWeight: 'bold',
-  borderBottom: '2px solid #ccc'
+  borderBottom: '2px solid #ccc',
+  color: '#034d1a' 
 };
 
 const tdStyle: React.CSSProperties = {
@@ -318,14 +319,15 @@ const tdStyle: React.CSSProperties = {
   borderBottom: '1px solid #eee'
 };
 
-const deleteButtonStyle: React.CSSProperties = { 
-  padding: '0.5rem', 
-  backgroundColor: '#dc3545', 
-  color: '#fff', 
-  border: 'none', 
-  borderRadius: '4px', 
+const deleteButtonStyle: React.CSSProperties = {
+  padding: '0.5rem',
+  backgroundColor: '#dc3545',
+  color: '#fff',
+  border: 'none',
+  borderRadius: '4px',
   cursor: 'pointer',
   fontSize: '1rem'
 };
+
 
 export default UeasView;

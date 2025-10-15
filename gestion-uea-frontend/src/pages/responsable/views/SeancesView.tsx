@@ -318,7 +318,7 @@ const inputStyle: React.CSSProperties = {
 
 const buttonStyle: React.CSSProperties = {
   padding: '0.75rem',
-  backgroundColor: '#1976d2',
+  backgroundColor: '#057a26',
   color: '#fff',
   border: 'none',
   borderRadius: '4px',
@@ -356,8 +356,8 @@ const statusStyle = (statut: string): React.CSSProperties => ({
   fontSize: '0.875rem',
   backgroundColor:
     statut === 'realisee' ? '#4caf50' :
-    statut === 'validee' ? '#2196f3' :
-    '#ff9800',
+    statut === 'validee' ? '#057a26' :
+    '#057a26',
   color: '#fff',
   fontWeight: 'bold'
 });

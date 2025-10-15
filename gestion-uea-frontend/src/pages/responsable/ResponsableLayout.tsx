@@ -3,7 +3,6 @@ import { apiClient } from '../../api/client';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import EventIcon from '@mui/icons-material/Event';
 import SchoolIcon from '@mui/icons-material/School';
-
 import BuildIcon from '@mui/icons-material/Build';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -24,7 +23,7 @@ const ResponsableLayout = ({ active, onNavigate, children }: Props) => {
     const fetchChef = async () => {
       try {
         const data = await apiClient('/me');
-        setChefName(data?.name || 'Responsable de metier');
+        setChefName(data?.name || 'Responsable de métier');
       } catch (err) {
         console.error('Erreur récupération chef:', err);
       }
@@ -33,12 +32,12 @@ const ResponsableLayout = ({ active, onNavigate, children }: Props) => {
   }, []);
 
   const colors = {
-    bg: '#e6f0ff',
-    text: '#003366',
+    bg: '#eaf6ee',         // Vert très clair pour le fond général
+    text: '#034d1a',       // Vert foncé pour le texte
     card: '#ffffff',
     shadow: '0 2px 8px rgba(0,0,0,0.1)',
-    activeBg: '#0077cc',
-    hoverBg: '#cce6ff'
+    activeBg: '#057a26',   // Vert principal pour les éléments actifs
+    hoverBg: '#b6e2c3'     // Vert pastel pour le survol
   };
 
   const navItems = [
@@ -47,7 +46,6 @@ const ResponsableLayout = ({ active, onNavigate, children }: Props) => {
     { key: 'ueas', label: 'UEA', icon: <MenuBookIcon /> },
     { key: 'salles', label: 'Salles', icon: <MeetingRoomIcon /> },
     { key: 'enseignants', label: 'Enseignants', icon: <SchoolIcon /> },
-    
     { key: 'assistants', label: 'Assistants', icon: <BuildIcon /> },
     { key: 'notifications', label: 'Notifications', icon: <NotificationsIcon /> },
     { key: 'parametres', label: 'Paramètres', icon: <SettingsIcon /> }
@@ -116,7 +114,7 @@ const ResponsableLayout = ({ active, onNavigate, children }: Props) => {
           }} style={{
             backgroundColor: colors.hoverBg,
             color: colors.text,
-            border: 'none', 
+            border: 'none',
             padding: '0.5rem 1rem',
             borderRadius: '6px',
             cursor: 'pointer',

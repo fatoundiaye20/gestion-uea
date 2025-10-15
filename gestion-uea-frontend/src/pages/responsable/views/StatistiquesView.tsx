@@ -81,7 +81,7 @@ const StatistiquesView = () => {
     datasets: [
       {
         data: [stats.ueas.terminees, stats.ueas.en_cours, stats.ueas.programmees],
-        backgroundColor: ['#4caf50', '#ff9800', '#2196f3']
+        backgroundColor: ['#4caf50', '#ff9800', '#057a26']
       }
     ]
   };

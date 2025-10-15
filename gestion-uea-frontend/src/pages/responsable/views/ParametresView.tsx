@@ -120,7 +120,7 @@ const inputStyle = {
 
 const buttonStyle = {
   padding: '0.75rem',
-  backgroundColor: '#006699',
+  backgroundColor: '#057a26',
   color: '#ffffff',
   border: 'none',
   borderRadius: '4px',

@@ -812,6 +812,8 @@ const ParametresPage: React.FC<{ theme: string }> = ({ theme }) => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [specialite, setSpecialite] = useState('');
+  const [motDePasse, setMotDePasse] = useState('');
+
 
   useEffect(() => {
     const userString = localStorage.getItem('user');
@@ -825,6 +827,8 @@ const ParametresPage: React.FC<{ theme: string }> = ({ theme }) => {
       setNom(''); 
       setEmail('');
       setSpecialite('');
+      setMessage('');
+      setMotDePasse('');
     }
   }, []);
 
@@ -881,6 +885,19 @@ const ParametresPage: React.FC<{ theme: string }> = ({ theme }) => {
         <label>
           specialite :
           <input type="text" value={specialite} onChange={(e) => setSpecialite(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '0.75rem',
+              borderRadius: '8px',
+              border: `1px solid ${theme === 'light' ? '#d1d5db' : '#4b5563'}`,
+              backgroundColor: theme === 'light' ? '#f9fafb' : '#374151',
+              color: theme === 'light' ? '#111827' : '#f9fafb'
+            }} />
+        </label>
+
+        <label>
+          Mot de passe :
+          <input type="password" value={motDePasse} onChange={(e) => setMotDePasse(e.target.value)}
             style={{
               width: '100%',
               padding: '0.75rem',

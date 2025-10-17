@@ -18,6 +18,7 @@ type Props = {
 
 const ResponsableLayout = ({ active, onNavigate, children }: Props) => {
   const [chefName, setChefName] = useState('');
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     const fetchChef = async () => {
@@ -32,12 +33,12 @@ const ResponsableLayout = ({ active, onNavigate, children }: Props) => {
   }, []);
 
   const colors = {
-    bg: '#eaf6ee',         // Vert très clair pour le fond général
-    text: '#034d1a',       // Vert foncé pour le texte
+    bg: '#e6f0ff',
+    text: '#003366',
     card: '#ffffff',
     shadow: '0 2px 8px rgba(0,0,0,0.1)',
-    activeBg: '#057a26',   // Vert principal pour les éléments actifs
-    hoverBg: '#b6e2c3'     // Vert pastel pour le survol
+    activeBg: '#0077cc',
+    hoverBg: '#cce6ff'
   };
 
   const navItems = [
@@ -50,6 +51,11 @@ const ResponsableLayout = ({ active, onNavigate, children }: Props) => {
     { key: 'notifications', label: 'Notifications', icon: <NotificationsIcon /> },
     { key: 'parametres', label: 'Paramètres', icon: <SettingsIcon /> }
   ];
+
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = '/';
+  };
 
   return (
     <div style={{ backgroundColor: colors.bg, color: colors.text }}>
@@ -107,11 +113,9 @@ const ResponsableLayout = ({ active, onNavigate, children }: Props) => {
             ))}
           </nav>
         </div>
+
         <div style={{ marginTop: '2rem' }}>
-          <button onClick={() => {
-            localStorage.clear();
-            window.location.href = '/';
-          }} style={{
+          <button onClick={() => setShowConfirm(true)} style={{
             backgroundColor: colors.hoverBg,
             color: colors.text,
             border: 'none',
@@ -122,6 +126,43 @@ const ResponsableLayout = ({ active, onNavigate, children }: Props) => {
           }}>
             Déconnexion
           </button>
+
+          {showConfirm && (
+            <div style={{
+              marginTop: '1rem',
+              backgroundColor: '#fff',
+              padding: '1rem',
+              borderRadius: '8px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              textAlign: 'center'
+            }}>
+              <p style={{ marginBottom: '1rem', color: '#003366' }}>Voulez-vous  déconnecter ?</p>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+                <button onClick={handleLogout} style={{
+                  backgroundColor: '#dc3545',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}>
+                  Oui
+                </button>
+                <button onClick={() => setShowConfirm(false)} style={{
+                  backgroundColor: '#0077cc',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}>
+                  Non
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </aside>
 

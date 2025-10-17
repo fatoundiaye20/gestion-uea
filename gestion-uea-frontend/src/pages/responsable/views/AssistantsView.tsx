@@ -140,7 +140,7 @@ const inputStyle: React.CSSProperties = {
 
 const buttonStyle: React.CSSProperties = {
   padding: '0.75rem',
-  backgroundColor: '#057a26',
+  backgroundColor: '#0077cc',
   color: '#fff',
   border: 'none',
   borderRadius: '4px',
